@@ -6,6 +6,41 @@
       "password": "11132003"
     }
   ],
-  "transactions": [],
-  "budgets": []
+  "transactions": [
+    {
+      "id": "404d",
+      "desc": "Sweldo for one week",
+      "amount": 2000,
+      "type": "income",
+      "category": "other",
+      "userId": "cc08",
+      "date": "2025-10-08T04:40:28.721Z"
+    },
+    {
+      "id": "b357",
+      "desc": "bugas",
+      "amount": 500,
+      "type": "expense",
+      "category": "food",
+      "userId": "cc08",
+      "date": "2025-10-08T04:41:21.556Z"
+    },
+    {
+      "id": "396a",
+      "desc": "beer",
+      "amount": 1000,
+      "type": "expense",
+      "category": "food",
+      "userId": "cc08",
+      "date": "2025-10-08T05:01:34.616Z"
+    }
+  ],
+  "budgets": [
+    {
+      "id": "2351",
+      "userId": "cc08",
+      "category": "food",
+      "limit": 800
+    }
+  ]
 }

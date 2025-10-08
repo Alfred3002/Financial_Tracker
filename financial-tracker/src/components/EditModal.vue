@@ -12,6 +12,8 @@ watch(() => props.budget, (newBudget) => {
 function saveEdit() {
   emit('save', editBudget.value)
 }
+
+
 </script>
 
 <template>

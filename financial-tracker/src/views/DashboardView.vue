@@ -3,6 +3,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/userStore'
 import { useTransactionStore } from '../stores/transactionStore'
+import EditTransactionModal from '../components/EditTransactionalModal.vue'
 
 const userStore = useUserStore()
 const txStore = useTransactionStore()
@@ -15,6 +16,9 @@ const category = ref('food')
 const categoryFilter = ref('all')
 const typeFilter = ref('all')
 const searchFilter = ref('')
+
+const showEditModal = ref(false)
+const selectedTx = ref(null)
 
 onMounted(() => {
   if (!userStore.user) router.push('/')
@@ -45,8 +49,22 @@ const logout = () => {
   userStore.logout()
   router.push('/')
 }
-</script>
 
+const openEditModal = (tx) => {
+  selectedTx.value = { ...tx }
+  showEditModal.value = true
+}
+
+const closeEditModal = () => {
+  showEditModal.value = false
+  selectedTx.value = null
+}
+
+const saveEditedTransaction = async (updatedTx) => {
+  await txStore.updateTransaction(updatedTx)
+  showEditModal.value = false
+}
+</script>
 
 <template>
   <div class="bg-white p-2 sm:p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
@@ -93,15 +111,15 @@ const logout = () => {
         <option value="income">Income</option>
         <option value="expense">Expense</option>
       </select>
-      <input v-model="searchFilter" type="text" placeholder="Search transactions..." class="flex-1 px-3 py-2 border rounded-lg">
+      <input v-model="searchFilter" type="text" placeholder="Search transactions..." class="flex-1 px-3 py-2 border rounded-lg" />
     </div>
 
     <!-- Add Transaction Section -->
     <div class="bg-white p-4 rounded-xl shadow-md mb-6">
       <h2 class="text-lg font-bold mb-3">Add Transaction</h2>
       <form @submit.prevent="addTransaction" class="grid grid-cols-2 gap-3">
-        <input v-model="desc" type="text" placeholder="Description" class="border px-3 py-2 rounded-lg" required>
-        <input v-model.number="amount" type="number" placeholder="Amount" class="border px-3 py-2 rounded-lg" required>
+        <input v-model="desc" type="text" placeholder="Description" class="border px-3 py-2 rounded-lg" required />
+        <input v-model.number="amount" type="number" placeholder="Amount" class="border px-3 py-2 rounded-lg" required />
         <select v-model="type" class="border px-3 py-2 rounded-lg">
           <option value="income">Income</option>
           <option value="expense">Expense</option>
@@ -123,10 +141,23 @@ const logout = () => {
           </div>
           <div class="flex gap-2 items-center">
             <span :class="tx.type === 'income' ? 'text-green-600' : 'text-red-600'">₱{{ tx.amount }}</span>
-            <button @click="txStore.deleteTransaction(tx.id)" class="text-red-600"><i class="fas fa-trash"></i></button>
+            <button @click="openEditModal(tx)" class="text-blue-600" title="Edit Transaction">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button @click="txStore.deleteTransaction(tx.id)" class="text-red-600" title="Delete Transaction">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
         </li>
       </ul>
     </div>
+
+    <!-- Edit Transaction Modal -->
+    <EditTransactionModal
+      v-if="showEditModal"
+      :transaction="selectedTx"
+      @save="saveEditedTransaction"
+      @close="closeEditModal"
+    />
   </div>
 </template>
